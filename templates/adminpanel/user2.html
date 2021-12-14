@@ -1,0 +1,397 @@
+{% extends "adminpanel/base.html" %}
+{% block page_content %}
+{% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" />
+    <section id="main_section" class="page-content area-padding-bottom" style="min-height:600px; display:none;">
+		<div class="phonenuber_sec">
+	 <span style="line-height:2.3; color:var(--caravan-dark-gray);">Tel: +1 xx xxx xx xx  |  <a href="mailto:support@autoservice.ai" style="color:var(--caravan-dark-gray)">support@autoservice.ai</a></span>
+	</div>
+        <div class="container-fluid">
+
+            <div class="topbackground" id="user_tbl" style="margin-top:20px;">
+                <div style="width:98%; margin-left:1%;">
+                    <div class="row">
+                        <div class="col-8 col-md-3">
+                            <!-- <input v-model="filter_str" type="text" class="form-control" style="border-color:#bbb" placeholder="Filter ..."> -->
+                        </div>
+                        <div class="col-4 col-md-9">
+						    <!-- <button v-on:click="onRegister" class="btn btn-success Register" style="float:right; margin-right:1%; font-size:14px; margin-bottom:10px;" -->
+                                <!-- data-target="#userRegisterModal" data-toggle="modal">Register <i class="fa fa-plus-circle" aria-hidden="true"></i></button> -->
+                        </div>
+                    </div>
+                    <div class="tblWrap">
+                        <table class="table-bordered my-table">
+                            <thead>
+                                <th style="width:160px;">Name</th>
+                                <th style="width:160px;">Phone Number</th>
+                                <th style="width:160px;">Email</th>
+                                <th style="width:160px;">Voice mail number</th>
+                                <th style="width:160px;">Company</th>
+								<th style="width:160px;">Date Created</th>
+                                <th style="width:160px;">Date Updated</th>
+                                <!-- <th style="width:140%;"></th> -->
+                            </thead>
+                            <tbody>
+                                <tr v-if="total_page == 0">
+                                    <td colspan="5">
+                                        No data
+                                    </td>
+                                </tr>
+                                <tr v-else v-for="user in user_list">
+                                    <td>[[ user.user_name ]]</td>
+                                    <td>[[ user.phone_number ]]</td>
+                                    <td>[[ user.email ]]</td>
+                                    <td>[[ user.voicemail_number ]]</td>
+                                    <td>[[ user.company_id ]]</td>
+                                    <td>[[ user.date_created ]]</td>
+                                    <td>[[ user.date_updated ]]</td>
+									<!-- <td> -->
+                                        <!-- <i @click="onUpdate(user.id)" class="fa fa-edit" data-target="#userRegisterModal" data-toggle="modal"></i> -->
+                                        <!-- <i @click="onDelete(user.id)" class="fa fa-trash"></i> -->
+                                    <!-- </td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" style="float:right !important;">
+                        <i v-on:click="onClickPrevious();" class="fa fa-arrow-left" style="padding-top:3px; padding-right:5px;"></i>
+                        <span v-if="total_page != 0">[[ cur_page ]] / [[ total_page ]]</span>
+                        <span v-if="total_page == 0">0 / 0</span>
+                        <i v-on:click="onClickNext();" class="fa fa-arrow-right" style="padding-top:3px; padding-left:5px;"></i>
+                    </div>
+                </div>
+
+                <div id="userRegisterModal" class="modal modal-adminpro-general default-popup-PrimaryModal fade" role="dialog" style="color:#54595f;">
+                    <div class="modal-dialog" style="width:100%; max-width:800px; font-size:16px;">
+                        <div class="modal-content">
+                            <div class="modal-header header-color-modal star-back-color" style="height:50px; color:white;">
+                                <h2 v-if="r_u_flag==1" class="modal-title Registertitle">Register user..</h2>
+                                <h2 v-if="r_u_flag==2" class="modal-title Registertitle">Update user</h2>
+                                <div class="modal-close-area modal-close-df">
+                                    <a class="close star-back-color" data-dismiss="modal" href="#" style="color:#54595f; margin-top:-20px;"><i class="fa fa-close"></i></a>
+                                </div>
+                            </div>
+                            <div style="margin-top:15px;">
+                                <section class="content" style="width:96%; margin-left:2%;">
+                                    <div class="row">
+                                        <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                            <label class="font-size14 margin_b">Name (*)</label>
+                                            <input v-model="user_name" class="form-control" :readonly="r_u_flag==2">
+                                        </div>
+										 <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                            <label class="font-size14 margin_b">Phone number</label>
+                                            <input v-model="phone_number" class="form-control">
+                                        </div>
+										 <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                            <label class="font-size14 margin_b">Email</label>
+                                            <input v-model="email" class="form-control">
+                                        </div>
+										 <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                            <label class="font-size14 margin_b">Voicemail Number</label>
+                                            <input v-model="voicemail_number" class="form-control">
+                                        </div>
+										<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                            <label class="font-size14 margin_b">Company</label>
+                                            <input v-model="company_id" class="form-control">
+                                        </div>
+										<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                            <label class="font-size14 margin_b">Date Created</label>
+                                            <input v-model="date_created" class="form-control">
+                                        </div>
+										<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                            <label class="font-size14 margin_b">Date updated</label>
+                                            <input v-model="date_updated" class="form-control">
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="modal-footer">
+                                <button v-on:click="onRegisteruser()" id="confirm_register" class="btn btn-success">Confirm</button>
+                                <button id="btn_close" class="btn btn-success" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript">
+        var usertbl_vue;        // usertbl vue instance
+        var user_list = new Array();
+
+        // *************** Init Data *************** //
+        function initData() {
+            {% for user in user_list %}
+                user_list.push({
+				     "id": "{{ user.id }}",
+                    "user_name": "{{ user.user_name }}",
+                    "phone_number": "{{ user.phone_number }}",
+                    "email": "{{ user.email }}",
+                    "voicemail_number": "{{ user.voicemail_number }}",
+                    "company_id": "{{ user.company_id }}",
+                    "date_created": "{{ user.date_created }}",
+                    "date_updated": "{{ user.date_updated }}",
+                });
+            {% endfor %}
+        }
+
+        // *************** Document Ready *************** //
+        $(document).ready(function() {
+            initData();
+            showLoading();
+            setTimeout(function() {
+                $("#main_section").css("display", "");
+                hideLoading();
+            }, FIRST_DELAY);
+
+            // *************** user Table Vue Instance *************** //
+            usertbl_vue = new Vue({
+                delimiters: ['[[', ']]'],
+                el : "#user_tbl",
+                data: {
+                    r_u_flag: 1,
+                    cur_page: 1,
+                    total_user: {{ total_user }},
+                    total_page: {{ total_page }},
+                    user_list: user_list,
+                    filter_str: "",
+                    user_name: "",
+                    phone_number: "",
+                    email: "",
+                    voicemail_number: "",
+                    company_id: "",
+                    date_created: "",
+                    date_updated: ""
+                },
+                methods: {
+                    // *************** OnClick Register user *************** //
+                    onRegister: function() {
+                        //this.r_u_flag = 1;
+                        //this.reg_name = this.reg_twilio_account_sid = "";
+                        //this.reg_twilio_auth_token = this.reg_twilio_phone_number = "";
+                    },
+                    getPageuser: function() {
+					console.log("get page")
+                        $.ajax({
+                            type: "POST",
+                            url: "/admin/get_page_user2",
+                            beforeSend: function( xhr ) {
+                                xhr.setRequestHeader("X-CSRFToken", getCsrfToken());
+                            },
+                            data: {
+                                "filter_str": this.filter_str,
+                                "cur_page": this.cur_page
+                            },
+                            async: false,
+                            success: function(res) {
+							console.log(res)
+                                res = JSON.parse(res);
+                                usertbl_vue.total_page = res["total_page"];
+                                res = res["user_list"];
+                                usertbl_vue.user_list = new Array();
+                                for (var i = 0; i < res.length; i++) {
+                                    usertbl_vue.user_list.push(res[i]);
+                                }
+                            }
+                        });
+                    },
+
+				// *************** OnClick Update User *************** //
+                    onUpdate: function(id) {
+                        var i;
+                        var idx;
+                        this.r_u_flag = 2;
+
+                        for (i = 0; i < this.user_list.length; i++) {
+                            var user = this.user_list[i];
+                            if (user["id"] == id) {
+                                this.user_name = user["user_name"];
+                                this.phone_number = user["phone_number"];
+                                this.email = user["email"];
+								this.company_id = user["company_id"];
+                                this.voicemail_number = user["voicemail_number"];
+                                this.date_created = user["date_created"];
+                                this.date_updated = user["date_updated"];
+
+                                break;
+                            }
+                        }
+                    },
+					                    // *************** OnConfirm Register user *************** //
+                    onRegisteruser: function() {
+                        var param = {};
+                        if (this.user_name == "" ){
+
+                            showMessage(alert_list["0x10001"]["mode"],
+                                        alert_list["0x10001"]["title"],
+                                        alert_list["0x10001"]["msg"], 5000);
+                            return;
+                        }
+
+                        param = {
+                            user_name: this.user_name,
+                            phone_number: this.phone_number,
+                            email: this.email,
+                            voicemail_number: this.voicemail_number,
+                            company_id: this.company_id,
+                            date_created: this.date_created,
+                            date_updated: this.date_updated
+                        };
+
+                        // ---------- register case ---------- //
+                        if (this.r_u_flag == 1) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/admin/register_user2",
+                                beforeSend: function( xhr ) {
+                                    xhr.setRequestHeader("X-CSRFToken", getCsrfToken());
+                                },
+                                data: {
+                                    "param": JSON.stringify(param)
+                                },
+                                async: false,
+                                success: function(res) {
+                                    var tmp_ary = new Array();
+                                    var i;
+
+                                    for (i = 0; i < usertbl_vue.user_list.length; i++)
+                                        tmp_ary.push(usertbl_vue.user_list[i]);
+
+                                    usertbl_vue.user_list = new Array();
+                                    usertbl_vue.user_list.push({
+										user_name: this.user_name,
+										phone_number: this.phone_number,
+										email: this.email,
+										voicemail_number: this.voicemail_number,
+										company_id: this.company_id,
+										date_created: this.date_created,
+										date_updated: this.date_updated
+                                    });
+
+                                    for (i = 0; i < Math.min(tmp_ary.length, 14); i++)
+                                        usertbl_vue.user_list[i+1] = tmp_ary[i];
+
+                                    usertbl_vue.total_user++;
+                                    usertbl_vue.total_page = Math.ceil(usertbl_vue.total_user / 15);
+
+                                    showMessage(alert_list["0x1000E"]["mode"],
+                                                alert_list["0x1000E"]["title"],
+                                                alert_list["0x1000E"]["msg"], 5000);
+
+                                    $("#btn_close").trigger("click");
+                                },
+                                error: function(res) {
+                                    if (res["responseText"] == "existing_name") {
+                                        showMessage(alert_list["0x1000F"]["mode"],
+                                                    alert_list["0x1000F"]["title"],
+                                                    alert_list["0x1000F"]["msg"], 5000);
+                                    } else if (res["responseText"] == "error") {
+                                        showMessage(alert_list["0xF0001"]["mode"],
+                                                    alert_list["0xF0001"]["title"],
+                                                    alert_list["0xF0001"]["msg"], 5000);
+                                    }
+                                }
+                            });
+                        }
+                        // ---------- update case ---------- //
+                        else if (this.r_u_flag == 2) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/admin/update_user2",
+                                beforeSend: function( xhr ) {
+                                    xhr.setRequestHeader("X-CSRFToken", getCsrfToken());
+                                },
+                                data: {
+                                    "param": JSON.stringify(param)
+                                },
+                                async: false,
+                                success: function(res) {
+                                    var i;
+                                    for (i = 0; i < usertbl_vue.user_list.length; i++) {
+                                        var user = usertbl_vue.user_list[i];
+                                        if (user["user_name"] == usertbl_vue.user_name) {
+                                            usertbl_vue.user_list[i]["user_name"] = usertbl_vue.user_name;
+                                            usertbl_vue.user_list[i]["phone_number"] = usertbl_vue.phone_number;
+                                            usertbl_vue.user_list[i]["email"] = usertbl_vue.email;
+                                            usertbl_vue.user_list[i]["date_created"] = usertbl_vue.date_created;
+                                            usertbl_vue.user_list[i]["date_updated"] = usertbl_vue.date_updated;
+                                        }
+                                    }
+                                    showMessage(alert_list["0x10010"]["mode"],
+                                                alert_list["0x10010"]["title"],
+                                                alert_list["0x10010"]["msg"], 5000);
+
+                                    $("#btn_close").trigger("click");
+                                },
+                                error: function(res) {
+                                    showMessage(alert_list["0xF0001"]["mode"],
+                                                alert_list["0xF0001"]["title"],
+                                                alert_list["0xF0001"]["msg"], 5000);
+                                }
+                            });
+                        }
+                    },
+					                    // *************** OnClick Delete user *************** //
+                    onDelete: function(id) {
+                        if (!confirm("Do you want to delete this user?")) return;
+                        $.ajax({
+                            type: "POST",
+                            url: "/admin/delete_user2",
+                            beforeSend: function( xhr ) {
+                                xhr.setRequestHeader("X-CSRFToken", getCsrfToken());
+                            },
+                            data: {
+                                "id": id
+                            },
+                            async: false,
+                            success: function(res) {
+                                for (var i = 0; i < usertbl_vue.user_list.length; i++) {
+                                    if (usertbl_vue.user_list[i]["id"] == id) {
+                                        usertbl_vue.user_list.splice(i, 1);
+                                        usertbl_vue.total_company--;
+                                        usertbl_vue.total_page = Math.ceil(usertbl_vue.total_user / 15);
+                                    }
+                                }
+                                showMessage(alert_list["0x10011"]["mode"],
+                                            alert_list["0x10011"]["title"],
+                                            alert_list["0x10011"]["msg"], 5000);
+                            },
+                            error: function(res) {
+                                showMessage(alert_list["0xF0001"]["mode"],
+                                            alert_list["0xF0001"]["title"],
+                                            alert_list["0xF0001"]["msg"], 5000);
+                            }
+                        });
+                    },
+
+                    // *************** OnClick Previous Page *************** //
+                    onClickPrevious: function() {
+                        if (this.cur_page <= 1)
+                            return;
+                        this.cur_page--;
+                        this.getPageuser();
+                    },
+
+                    // *************** OnClick Next Page *************** //
+                    onClickNext: function() {
+                        if (this.cur_page >= this.total_page)
+                            return;
+                        this.cur_page++;
+                        this.getPageuser();
+                    }
+                },
+                watch: {
+                    // *************** OnUpdate Filter String *************** //
+                    filter_str: function() {
+                        this.cur_page = 1;
+                        this.getPageuser();
+                    }
+                }
+            });
+        });
+
+    </script>
+{% endblock %}
